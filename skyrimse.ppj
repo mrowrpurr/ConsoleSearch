@@ -1,0 +1,34 @@
+<?xml version='1.0'?>
+<PapyrusProject xmlns="PapyrusProject.xsd" 
+    Flags="TESV_Papyrus_Flags.flg" 
+    Game="sse"
+    Anonymize="true" 
+    Output="Scripts" 
+    Optimize="false" 
+    Release="false" 
+    Zip="false"
+    Package="false"
+    Final="false">
+    <Variables>
+        <Variable Name="ModName" Value="ConsoleSearch" />
+        <Variable Name="ModsFolder" Value="C:\Users\mrowr\Dropbox\Skyrim\Mods" />
+        <Variable Name="ImportsFolder" Value="C:\Users\mrowr\Dropbox\Skyrim\Imports" />
+    </Variables>
+    <Imports>
+        <Import>@ModsFolder\SKSE64\Scripts\Source</Import>
+        <Import>@ImportsFolder\ConsoleUtil\Scripts\Source</Import>
+        <Import>@ImportsFolder\JContainers\Scripts\Source</Import>
+        <Import>C:\Steam\steamapps\common\Skyrim Special Edition\Data\Scripts\Source</Import>
+    </Imports>
+    <Folders>
+        <Folder>./Scripts/Source</Folder>
+    </Folders>
+    <ZipFiles Output="Build">
+        <ZipFile Name="@ModName" RootDir="." Compression="deflate">
+            <Include>@ModName.esp</Include>
+            <Match In="Scripts">*.pex</Match>
+            <Include NoRecurse="true">*.bsa</Include>
+            <Match In="Scripts\Source">*.psc</Match>
+        </ZipFile>
+    </ZipFiles>
+</PapyrusProject>
