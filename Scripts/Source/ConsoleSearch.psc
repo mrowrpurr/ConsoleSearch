@@ -136,11 +136,16 @@ int function ExecuteSearch(string query, string recordType = "", string filter =
     string text = Help(query)
     string[] lines = StringUtil.Split(text, newline)
     bool parsingForms
+    bool parsingGlobals
+
     int i = 0
     while i < lines.Length
         string line = lines[i]
-        if ! parsingForms && StringUtil.Find(line, "-OTHER FORMS-") > -1
+        if ! parsingGlobals && ! parsingForms && StringUtil.Find(line, "-GLOBAL VARIABLES-") > -1
+            parsingGlobals = true
+        elseIf ! parsingForms && StringUtil.Find(line, "-OTHER FORMS-") > -1
             parsingForms = true
+            parsingGlobals = false
         elseIf parsingForms
             int colon = StringUtil.Find(line, ":")
             if colon > -1
@@ -162,8 +167,8 @@ int function ExecuteSearch(string query, string recordType = "", string filter =
                                 JArray.addObj(JMap.getObj(results, type), result)
                             else
                                 int typeArray = JArray.object()
-                                JArray.addObj(typeArray, result)
                                 JMap.setObj(results, type, typeArray)
+                                JArray.addObj(typeArray, result)
                             endIf
                             if name == "'"
                                 name = ""
@@ -175,6 +180,22 @@ int function ExecuteSearch(string query, string recordType = "", string filter =
                     endIf
                 endIf
             endIf
+        elseIf parsingGlobals && StringUtil.Find(line, "-") == 0
+            parsingGlobals = false
+        elseIf parsingGlobals
+            string[] globalVariableLineParts = StringUtil.Split(line, " ")
+            string globalName = globalVariableLineParts[0]
+            float globalValue = globalVariableLineParts[2] as float
+            int result = JMap.object()
+            JMap.setStr(result, "name", globalName)
+            JMap.setFlt(result, "globalValue", globalValue)
+            if JMap.hasKey(results, "GLOB")
+                JArray.addObj(JMap.getObj(results, "GLOB"), result)
+            else
+                int typeArray = JArray.object()
+                JMap.setObj(results, "GLOB", typeArray)
+                JArray.addObj(typeArray, result)
+            endIf   
         endIf
         i += 1
     endWhile
